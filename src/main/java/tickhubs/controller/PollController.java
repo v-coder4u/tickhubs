@@ -9,20 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import tickhubs.model.Poll;
-import tickhubs.payload.ApiResponse;
-import tickhubs.payload.PagedResponse;
-import tickhubs.payload.PollRequest;
-import tickhubs.payload.PollResponse;
-import tickhubs.payload.VoteRequest;
+import tickhubs.dto.ApiResponse;
+import tickhubs.dto.PagedResponse;
+import tickhubs.dto.PollRequest;
+import tickhubs.dto.PollResponse;
+import tickhubs.dto.VoteRequest;
 import tickhubs.repository.PollRepository;
 import tickhubs.repository.UserRepository;
 import tickhubs.repository.VoteRepository;
 import tickhubs.security.CurrentUser;
 import tickhubs.security.UserPrincipal;
-import tickhubs.service.PollService;
+import tickhubs.service.impl.PollServiceImpl;
 import tickhubs.util.AppConstants;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 /**
@@ -43,7 +42,7 @@ public class PollController {
 	private UserRepository userRepository;
 
 	@Autowired
-	private PollService pollService;
+	private PollServiceImpl pollServiceImpl;
 
 	private static final Logger logger = LoggerFactory.getLogger(PollController.class);
 
@@ -51,13 +50,13 @@ public class PollController {
 	public PagedResponse<PollResponse> getPolls(@CurrentUser UserPrincipal currentUser,
 			@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
 			@RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-		return pollService.getAllPolls(currentUser, page, size);
+		return pollServiceImpl.getAllPolls(currentUser, page, size);
 	}
 
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> createPoll(@Valid @RequestBody PollRequest pollRequest) {
-		Poll poll = pollService.createPoll(pollRequest);
+	public ResponseEntity<?> createPoll(@RequestBody PollRequest pollRequest) {
+		Poll poll = pollServiceImpl.createPoll(pollRequest);
 
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{pollId}").buildAndExpand(poll.getId())
 				.toUri();
@@ -67,14 +66,13 @@ public class PollController {
 
 	@GetMapping("/{pollId}")
 	public PollResponse getPollById(@CurrentUser UserPrincipal currentUser, @PathVariable Long pollId) {
-		return pollService.getPollById(pollId, currentUser);
+		return pollServiceImpl.getPollById(pollId, currentUser);
 	}
 
 	@PostMapping("/{pollId}/votes")
 	@PreAuthorize("hasRole('USER')")
-	public PollResponse castVote(@CurrentUser UserPrincipal currentUser, @PathVariable Long pollId,
-			@Valid @RequestBody VoteRequest voteRequest) {
-		return pollService.castVoteAndGetUpdatedPoll(pollId, voteRequest, currentUser);
+	public PollResponse castVote(@CurrentUser UserPrincipal currentUser, @PathVariable Long pollId, @RequestBody VoteRequest voteRequest) {
+		return pollServiceImpl.castVoteAndGetUpdatedPoll(pollId, voteRequest, currentUser);
 	}
 
 }

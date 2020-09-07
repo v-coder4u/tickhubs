@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 import tickhubs.model.Poll;
 import tickhubs.model.User;
-import tickhubs.payload.ChoiceResponse;
-import tickhubs.payload.PollResponse;
-import tickhubs.payload.UserSummary;
+import tickhubs.dto.ChoiceResponse;
+import tickhubs.dto.PollResponse;
+import tickhubs.dto.UserSummary;
 
 /**
  * $ created by Vaibhav Varshney on : Aug 30, 2020

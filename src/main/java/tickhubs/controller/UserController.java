@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.*;
 
 import tickhubs.exception.ResourceNotFoundException;
 import tickhubs.model.User;
-import tickhubs.payload.PagedResponse;
-import tickhubs.payload.PollResponse;
-import tickhubs.payload.UserIdentityAvailability;
-import tickhubs.payload.UserProfile;
-import tickhubs.payload.UserSummary;
+import tickhubs.dto.PagedResponse;
+import tickhubs.dto.PollResponse;
+import tickhubs.dto.UserIdentityAvailability;
+import tickhubs.dto.UserProfile;
+import tickhubs.dto.UserSummary;
 import tickhubs.repository.PollRepository;
 import tickhubs.repository.UserRepository;
 import tickhubs.repository.VoteRepository;
 import tickhubs.security.CurrentUser;
 import tickhubs.security.UserPrincipal;
-import tickhubs.service.PollService;
+import tickhubs.service.impl.PollServiceImpl;
 import tickhubs.util.AppConstants;
 
 /**
@@ -39,7 +39,7 @@ public class UserController {
 	private VoteRepository voteRepository;
 
 	@Autowired
-	private PollService pollService;
+	private PollServiceImpl pollServiceImpl;
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -82,7 +82,7 @@ public class UserController {
 			@CurrentUser UserPrincipal currentUser,
 			@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
 			@RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-		return pollService.getPollsCreatedBy(username, currentUser, page, size);
+		return pollServiceImpl.getPollsCreatedBy(username, currentUser, page, size);
 	}
 
 	@GetMapping("/users/{username}/votes")
@@ -90,7 +90,7 @@ public class UserController {
 			@CurrentUser UserPrincipal currentUser,
 			@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
 			@RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-		return pollService.getPollsVotedBy(username, currentUser, page, size);
+		return pollServiceImpl.getPollsVotedBy(username, currentUser, page, size);
 	}
 
 }

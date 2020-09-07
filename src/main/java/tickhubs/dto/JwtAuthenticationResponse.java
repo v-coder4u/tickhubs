@@ -1,4 +1,4 @@
-package tickhubs.payload;
+package tickhubs.dto;
 
 /**
  * $ created by Vaibhav Varshney on : Aug 30, 2020

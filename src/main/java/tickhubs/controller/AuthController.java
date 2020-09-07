@@ -18,10 +18,10 @@ import tickhubs.exception.AppException;
 import tickhubs.model.Role;
 import tickhubs.model.RoleName;
 import tickhubs.model.User;
-import tickhubs.payload.ApiResponse;
-import tickhubs.payload.JwtAuthenticationResponse;
-import tickhubs.payload.LoginRequest;
-import tickhubs.payload.SignUpRequest;
+import tickhubs.dto.ApiResponse;
+import tickhubs.dto.JwtAuthenticationResponse;
+import tickhubs.dto.LoginRequest;
+import tickhubs.dto.SignUpRequest;
 import tickhubs.repository.RoleRepository;
 import tickhubs.repository.UserRepository;
 import tickhubs.security.JwtTokenProvider;
@@ -75,8 +75,12 @@ public class AuthController {
 		}
 
 		// Creating user's account
-		User user = new User(signUpRequest.getName(), signUpRequest.getUsername(), signUpRequest.getEmail(),
-				signUpRequest.getPassword());
+		User user = User.builder()
+				.name(signUpRequest.getName())
+				.username(signUpRequest.getUsername())
+				.email(signUpRequest.getEmail())
+				.password(signUpRequest.getPassword())
+				.build();
 
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 

@@ -1,4 +1,4 @@
-package tickhubs.payload;
+package tickhubs.dto;
 
 public class ApiResponse {
 	private Boolean success;

@@ -1,4 +1,4 @@
-package tickhubs.payload;
+package tickhubs.dto;
 
 import javax.validation.constraints.*;
 
