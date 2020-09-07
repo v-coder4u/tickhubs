@@ -1,82 +1,73 @@
 package tickhubs.model;
 
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import tickhubs.audit.UserDateAudit;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import tickhubs.enums.PollType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * $ created by Vaibhav Varshney on : Aug 23, 2020
- */
 
 @Entity
-@Table(name = "polls")
-public class Poll extends UserDateAudit {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class Poll extends BaseModel {
 
-	@NotBlank
-	@Size(max = 140)
-	private String question;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-	@OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	@Size(min = 2, max = 6)
-	@Fetch(FetchMode.SELECT)
-	@BatchSize(size = 30)
-	private List<Choice> choices = new ArrayList<>();
+    @NotBlank
+    @Lob
+    @Size(max = 150)
+    String question;
+/*
+//    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany
+    @Size(min = 2, max = 8)
+//    @Fetch(FetchMode.SELECT)
+//    @BatchSize(size = 30)
 
-	@NotNull
-	private Instant expirationDateTime;
+        */
 
-	public Long getId() {
-		return id;
-	}
+    @OneToMany(cascade = CascadeType.ALL)
+    Set<Choice> choices = new HashSet<>();
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @NotNull
+    Instant expirationDateTime;
 
-	public String getQuestion() {
-		return question;
-	}
+    @ManyToOne
+    User createdBy;
 
-	public void setQuestion(String question) {
-		this.question = question;
-	}
+    PollType type;
 
-	public List<Choice> getChoices() {
-		return choices;
-	}
 
-	public void setChoices(List<Choice> choices) {
-		this.choices = choices;
-	}
+//    Choice correctChoice;
 
-	public Instant getExpirationDateTime() {
-		return expirationDateTime;
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    Room room;
 
-	public void setExpirationDateTime(Instant expirationDateTime) {
-		this.expirationDateTime = expirationDateTime;
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    Tag tag;
 
-	public void addChoice(Choice choice) {
-		choices.add(choice);
-		choice.setPoll(this);
-	}
+    String description;//not in use
 
-	public void removeChoice(Choice choice) {
-		choices.remove(choice);
-		choice.setPoll(null);
-	}
+    public void addChoice(Choice choice) {
+        choices.add(choice);
+//        choice.setPoll(this);
+    }
+
+    public void removeChoice(Choice choice) {
+        choices.remove(choice);
+//        choice.setPoll(null);
+    }
 }

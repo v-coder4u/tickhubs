@@ -16,7 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import tickhubs.exception.AppException;
 import tickhubs.model.Role;
-import tickhubs.model.RoleName;
+import tickhubs.enums.RoleName;
 import tickhubs.model.User;
 import tickhubs.dto.ApiResponse;
 import tickhubs.dto.JwtAuthenticationResponse;

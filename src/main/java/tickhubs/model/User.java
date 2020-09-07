@@ -4,14 +4,12 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.NaturalId;
-import tickhubs.audit.DateAudit;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User extends DateAudit {
+public class User extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

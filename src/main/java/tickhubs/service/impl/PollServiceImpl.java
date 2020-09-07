@@ -152,7 +152,7 @@ public class PollServiceImpl {
 		poll.setQuestion(pollRequest.getQuestion());
 
 		pollRequest.getChoices().forEach(choiceRequest -> {
-			poll.addChoice(new Choice(choiceRequest.getText()));
+			poll.addChoice(Choice.builder().text(choiceRequest.getText()).build());
 		});
 
 		Instant now = Instant.now();
@@ -175,7 +175,7 @@ public class PollServiceImpl {
 				.collect(Collectors.toMap(ChoiceVoteCount::getChoiceId, ChoiceVoteCount::getVoteCount));
 
 		// Retrieve poll creator details
-		User creator = userRepository.findById(poll.getCreatedBy())
+		User creator = userRepository.findById(poll.getCreatedBy().getId())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "id", poll.getCreatedBy()));
 
 		// Retrieve vote done by logged in user
@@ -223,7 +223,7 @@ public class PollServiceImpl {
 				.collect(Collectors.toMap(ChoiceVoteCount::getChoiceId, ChoiceVoteCount::getVoteCount));
 
 		// Retrieve poll creator details
-		User creator = userRepository.findById(poll.getCreatedBy())
+		User creator = userRepository.findById(poll.getCreatedBy().getId())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "id", poll.getCreatedBy()));
 
 		return ModelMapper.mapPollToPollResponse(poll, choiceVotesMap, creator, vote.getChoice().getId());
@@ -263,7 +263,8 @@ public class PollServiceImpl {
 
 	Map<Long, User> getPollCreatorMap(List<Poll> polls) {
 		// Get Poll Creator details of the given list of polls
-		List<Long> creatorIds = polls.stream().map(Poll::getCreatedBy).distinct().collect(Collectors.toList());
+		List<User> userIds = polls.stream().map(Poll::getCreatedBy).distinct().collect(Collectors.toList());
+		List<Long> creatorIds = userIds.stream().map(User::getId).distinct().collect(Collectors.toList());
 
 		List<User> creators = userRepository.findByIdIn(creatorIds);
 		Map<Long, User> creatorMap = creators.stream().collect(Collectors.toMap(User::getId, Function.identity()));

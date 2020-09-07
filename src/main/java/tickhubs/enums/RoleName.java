@@ -1,4 +1,4 @@
-package tickhubs.model;
+package tickhubs.enums;
 
 /**
  * $ created by Vaibhav Varshney on : Aug 23, 2020

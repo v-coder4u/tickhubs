@@ -71,7 +71,7 @@ public class UserController {
 		long pollCount = pollRepository.countByCreatedBy(user.getId());
 		long voteCount = voteRepository.countByUserId(user.getId());
 
-		UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName(), user.getCreatedAt(),
+		UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName(), user.getCreatedDate(),
 				pollCount, voteCount);
 
 		return userProfile;

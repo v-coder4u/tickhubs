@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import tickhubs.model.Role;
-import tickhubs.model.RoleName;
+import tickhubs.enums.RoleName;
 
 import java.util.Optional;
 

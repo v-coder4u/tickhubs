@@ -1,6 +1,8 @@
 package tickhubs.model;
 
 import org.hibernate.annotations.NaturalId;
+import tickhubs.enums.RoleName;
+
 import javax.persistence.*;
 
 /**
@@ -9,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Role extends BaseModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

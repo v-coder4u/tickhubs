@@ -1,11 +1,10 @@
 package tickhubs.model;
 
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Entity
 @Getter
@@ -14,19 +13,15 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Choice {
+public class Comment extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank
-    @Size(max = 40)
-    String text;
+    @Lob
+    String description;
 
-    Long count = 0l;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    Poll poll;
-
+    @ManyToOne
+    User createdBy;
 }
