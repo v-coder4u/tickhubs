@@ -21,14 +21,12 @@ import java.util.Date;
 public abstract class BaseModel implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false, updatable = false)
     @CreatedDate
-    Date createdDate;
+    private Date createdDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
     @LastModifiedDate
-    Date updatedDate;
+    private Date lastModifiedDate;
 
     boolean active = true;
 }

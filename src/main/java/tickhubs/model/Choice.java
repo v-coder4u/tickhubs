@@ -27,6 +27,11 @@ public class Choice {
     Long count = 0l;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "poll_id", nullable = false)
     Poll poll;
+
+    public Choice(String text){
+        this.text = text;
+    }
 
 }

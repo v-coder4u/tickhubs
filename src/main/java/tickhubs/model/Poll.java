@@ -2,6 +2,9 @@ package tickhubs.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import tickhubs.enums.PollType;
 
 import javax.persistence.*;
@@ -9,8 +12,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -30,17 +33,12 @@ public class Poll extends BaseModel {
     @Lob
     @Size(max = 150)
     String question;
-/*
-//    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @OneToMany
+
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @Size(min = 2, max = 8)
-//    @Fetch(FetchMode.SELECT)
-//    @BatchSize(size = 30)
-
-        */
-
-    @OneToMany(cascade = CascadeType.ALL)
-    Set<Choice> choices = new HashSet<>();
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 30)
+    List<Choice> choices = new ArrayList<>();
 
     @NotNull
     Instant expirationDateTime;
@@ -63,11 +61,11 @@ public class Poll extends BaseModel {
 
     public void addChoice(Choice choice) {
         choices.add(choice);
-//        choice.setPoll(this);
+        choice.setPoll(this);
     }
 
     public void removeChoice(Choice choice) {
         choices.remove(choice);
-//        choice.setPoll(null);
+        choice.setPoll(null);
     }
 }

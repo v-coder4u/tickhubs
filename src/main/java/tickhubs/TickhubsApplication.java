@@ -17,10 +17,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 //@EnableEurekaServer
 public class TickhubsApplication {
 
-	/*@PostConstruct
+	@PostConstruct
 	void init() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}*/
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(TickhubsApplication.class, args);

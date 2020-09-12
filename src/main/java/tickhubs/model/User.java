@@ -2,7 +2,6 @@ package tickhubs.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -10,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,7 +32,7 @@ public class User extends BaseModel {
 
     @NotBlank
     @Size(max = 15)
-    @Unique
+    @Column(unique = true)
     String username;
 
     @NaturalId
@@ -57,16 +57,22 @@ public class User extends BaseModel {
     @Size(max = 100)
     String password;
 
+    String avatar;
+
+    @OneToOne
+    FileManager profilePic;
+
     @Builder.Default
     boolean verified = false;
 
-//    List<String> tags;//TODO:MtM TAGS ENUM to be created
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Tag> tags;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles = new HashSet<>();
 
-    String type;//TODO:TYPE ENUM to be created
+//    String type;//TODO:TYPE ENUM to be created
 
     @Builder.Default
     boolean deactivated = false;

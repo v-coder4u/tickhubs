@@ -12,16 +12,13 @@ import org.springframework.stereotype.Service;
 
 import tickhubs.exception.BadRequestException;
 import tickhubs.exception.ResourceNotFoundException;
-import tickhubs.model.Choice;
-import tickhubs.model.ChoiceVoteCount;
-import tickhubs.model.Poll;
-import tickhubs.model.User;
-import tickhubs.model.Vote;
+import tickhubs.model.*;
 import tickhubs.dto.PagedResponse;
 import tickhubs.dto.PollRequest;
 import tickhubs.dto.PollResponse;
 import tickhubs.dto.VoteRequest;
 import tickhubs.repository.PollRepository;
+import tickhubs.repository.TagRepository;
 import tickhubs.repository.UserRepository;
 import tickhubs.repository.VoteRepository;
 import tickhubs.security.UserPrincipal;
@@ -51,6 +48,10 @@ public class PollServiceImpl {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private TagRepository tagRepository;
+
 
 	private static final Logger logger = LoggerFactory.getLogger(PollServiceImpl.class);
 
@@ -152,7 +153,7 @@ public class PollServiceImpl {
 		poll.setQuestion(pollRequest.getQuestion());
 
 		pollRequest.getChoices().forEach(choiceRequest -> {
-			poll.addChoice(Choice.builder().text(choiceRequest.getText()).build());
+			poll.addChoice(new Choice(choiceRequest.getText()));
 		});
 
 		Instant now = Instant.now();
@@ -161,6 +162,8 @@ public class PollServiceImpl {
 
 		poll.setExpirationDateTime(expirationDateTime);
 
+		Tag tag = tagRepository.getOne(pollRequest.getTagId());
+		poll.setTag(tag);
 		return pollRepository.save(poll);
 	}
 

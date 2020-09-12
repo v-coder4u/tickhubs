@@ -20,10 +20,8 @@ public class Tag extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
-    @Column(unique = true)
-    @Enumerated(EnumType.STRING)
-    TagCategory tagName;
+    
+    String tagName;
 
     Long parentId;
 

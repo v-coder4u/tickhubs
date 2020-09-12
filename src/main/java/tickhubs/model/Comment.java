@@ -24,4 +24,7 @@ public class Comment extends BaseModel {
 
     @ManyToOne
     User createdBy;
+
+    @ManyToOne
+    Poll poll;
 }

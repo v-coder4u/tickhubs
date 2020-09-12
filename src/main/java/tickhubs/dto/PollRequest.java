@@ -1,5 +1,8 @@
 package tickhubs.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,6 +13,8 @@ import java.util.List;
  * $ created by Vaibhav Varshney on : Aug 30, 2020
  */
 
+@Getter
+@Setter
 public class PollRequest {
 	@NotBlank
 	@Size(max = 140)
@@ -24,27 +29,5 @@ public class PollRequest {
 	@Valid
 	private PollLength pollLength;
 
-	public String getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(String question) {
-		this.question = question;
-	}
-
-	public List<ChoiceRequest> getChoices() {
-		return choices;
-	}
-
-	public void setChoices(List<ChoiceRequest> choices) {
-		this.choices = choices;
-	}
-
-	public PollLength getPollLength() {
-		return pollLength;
-	}
-
-	public void setPollLength(PollLength pollLength) {
-		this.pollLength = pollLength;
-	}
+	private Long tagId;
 }
