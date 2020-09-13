@@ -43,7 +43,7 @@ public class Poll extends BaseModel {
     @NotNull
     Instant expirationDateTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     User createdBy;
 
     PollType type;

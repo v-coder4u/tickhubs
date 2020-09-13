@@ -8,28 +8,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.CollectionUtils;
+import tickhubs.dto.*;
 import tickhubs.exception.BadRequestException;
 import tickhubs.exception.ResourceNotFoundException;
 import tickhubs.model.*;
-import tickhubs.dto.PagedResponse;
-import tickhubs.dto.PollRequest;
-import tickhubs.dto.PollResponse;
-import tickhubs.dto.VoteRequest;
 import tickhubs.repository.PollRepository;
 import tickhubs.repository.TagRepository;
 import tickhubs.repository.UserRepository;
 import tickhubs.repository.VoteRepository;
 import tickhubs.security.UserPrincipal;
 import tickhubs.util.AppConstants;
+import tickhubs.util.CoreUtil;
 import tickhubs.util.ModelMapper;
 
+import javax.persistence.Lob;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -69,12 +68,11 @@ public class PollServiceImpl {
 
 		// Map Polls to PollResponses containing vote counts and poll creator details
 		List<Long> pollIds = polls.map(Poll::getId).getContent();
-		Map<Long, Long> choiceVoteCountMap = getChoiceVoteCountMap(pollIds);
 		Map<Long, Long> pollUserVoteMap = getPollUserVoteMap(currentUser, pollIds);
 		Map<Long, User> creatorMap = getPollCreatorMap(polls.getContent());
 
 		List<PollResponse> pollResponses = polls.map(poll -> {
-			return ModelMapper.mapPollToPollResponse(poll, choiceVoteCountMap, creatorMap.get(poll.getCreatedBy()),
+			return ModelMapper.mapPollToPollResponse(poll, creatorMap.get(poll.getCreatedBy()),
 					pollUserVoteMap == null ? null : pollUserVoteMap.getOrDefault(poll.getId(), null));
 		}).getContent();
 
@@ -100,11 +98,10 @@ public class PollServiceImpl {
 
 		// Map Polls to PollResponses containing vote counts and poll creator details
 		List<Long> pollIds = polls.map(Poll::getId).getContent();
-		Map<Long, Long> choiceVoteCountMap = getChoiceVoteCountMap(pollIds);
 		Map<Long, Long> pollUserVoteMap = getPollUserVoteMap(currentUser, pollIds);
 
 		List<PollResponse> pollResponses = polls.map(poll -> {
-			return ModelMapper.mapPollToPollResponse(poll, choiceVoteCountMap, user,
+			return ModelMapper.mapPollToPollResponse(poll, user,
 					pollUserVoteMap == null ? null : pollUserVoteMap.getOrDefault(poll.getId(), null));
 		}).getContent();
 
@@ -135,12 +132,11 @@ public class PollServiceImpl {
 		List<Poll> polls = pollRepository.findByIdIn(pollIds, sort);
 
 		// Map Polls to PollResponses containing vote counts and poll creator details
-		Map<Long, Long> choiceVoteCountMap = getChoiceVoteCountMap(pollIds);
 		Map<Long, Long> pollUserVoteMap = getPollUserVoteMap(currentUser, pollIds);
 		Map<Long, User> creatorMap = getPollCreatorMap(polls);
 
 		List<PollResponse> pollResponses = polls.stream().map(poll -> {
-			return ModelMapper.mapPollToPollResponse(poll, choiceVoteCountMap, creatorMap.get(poll.getCreatedBy()),
+			return ModelMapper.mapPollToPollResponse(poll, creatorMap.get(poll.getCreatedBy()),
 					pollUserVoteMap == null ? null : pollUserVoteMap.getOrDefault(poll.getId(), null));
 		}).collect(Collectors.toList());
 
@@ -161,6 +157,9 @@ public class PollServiceImpl {
 				.plus(Duration.ofHours(pollRequest.getPollLength().getHours()));
 
 		poll.setExpirationDateTime(expirationDateTime);
+
+		User user = userRepository.getOne(CoreUtil.getCurrentUserId());
+		poll.setCreatedBy(user);
 
 		Tag tag = tagRepository.getOne(pollRequest.getTagId());
 		poll.setTag(tag);
@@ -187,7 +186,7 @@ public class PollServiceImpl {
 			userVote = voteRepository.findByUserIdAndPollId(currentUser.getId(), pollId);
 		}
 
-		return ModelMapper.mapPollToPollResponse(poll, choiceVotesMap, creator,
+		return ModelMapper.mapPollToPollResponse(poll, creator,
 				userVote != null ? userVote.getChoice().getId() : null);
 	}
 
@@ -229,7 +228,7 @@ public class PollServiceImpl {
 		User creator = userRepository.findById(poll.getCreatedBy().getId())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "id", poll.getCreatedBy()));
 
-		return ModelMapper.mapPollToPollResponse(poll, choiceVotesMap, creator, vote.getChoice().getId());
+		return ModelMapper.mapPollToPollResponse(poll, creator, vote.getChoice().getId());
 	}
 
 	private void validatePageNumberAndSize(int page, int size) {
@@ -242,7 +241,8 @@ public class PollServiceImpl {
 		}
 	}
 
-	private Map<Long, Long> getChoiceVoteCountMap(List<Long> pollIds) {
+	//Not In Use Now
+	/*private Map<Long, Long> getChoiceVoteCountMap(List<Long> pollIds) {
 		// Retrieve Vote Counts of every Choice belonging to the given pollIds
 		List<ChoiceVoteCount> votes = voteRepository.countByPollIdInGroupByChoiceId(pollIds);
 
@@ -250,7 +250,7 @@ public class PollServiceImpl {
 				.collect(Collectors.toMap(ChoiceVoteCount::getChoiceId, ChoiceVoteCount::getVoteCount));
 
 		return choiceVotesMap;
-	}
+	}*/
 
 	private Map<Long, Long> getPollUserVoteMap(UserPrincipal currentUser, List<Long> pollIds) {
 		// Retrieve Votes done by the logged in user to the given pollIds
@@ -264,14 +264,32 @@ public class PollServiceImpl {
 		return pollUserVoteMap;
 	}
 
-	Map<Long, User> getPollCreatorMap(List<Poll> polls) {
-		// Get Poll Creator details of the given list of polls
+	private Map<Long, User> getPollCreatorMap(List<Poll> polls) {
 		List<User> userIds = polls.stream().map(Poll::getCreatedBy).distinct().collect(Collectors.toList());
 		List<Long> creatorIds = userIds.stream().map(User::getId).distinct().collect(Collectors.toList());
 
 		List<User> creators = userRepository.findByIdIn(creatorIds);
 		Map<Long, User> creatorMap = creators.stream().collect(Collectors.toMap(User::getId, Function.identity()));
-
 		return creatorMap;
+	}
+
+	public ApiResponse<List<PollResponse>> getAllPollsByTagId(Long tagId) {
+		ApiResponse<List<PollResponse>> response = new ApiResponse<>(true,"fetched Successfully");
+		if(Objects.isNull(tagId)){
+			return response;
+		}
+
+		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+		Instant instant = Instant.now();
+		Page<Poll> polls = pollRepository.findAllByTagIdAndExpirationDateTimeGreaterThan(tagId, instant,pageable);
+		if(polls.getNumberOfElements() != 0) {
+			Map<Long, User> creatorMap = getPollCreatorMap(polls.getContent());
+			List<PollResponse> pollResponses = polls.map(poll ->
+					ModelMapper.mapPollToPollResponse(poll, poll.getCreatedBy(), null)).getContent();
+
+			response.setData(pollResponses);
+			return response;
+		}
+		return response;
 	}
 }

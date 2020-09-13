@@ -8,12 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import tickhubs.dto.*;
 import tickhubs.model.Poll;
-import tickhubs.dto.ApiResponse;
-import tickhubs.dto.PagedResponse;
-import tickhubs.dto.PollRequest;
-import tickhubs.dto.PollResponse;
-import tickhubs.dto.VoteRequest;
 import tickhubs.repository.PollRepository;
 import tickhubs.repository.UserRepository;
 import tickhubs.repository.VoteRepository;
@@ -23,6 +19,7 @@ import tickhubs.service.impl.PollServiceImpl;
 import tickhubs.util.AppConstants;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * $ created by Vaibhav Varshney on : Sep 05, 2020
@@ -73,6 +70,12 @@ public class PollController {
 	@PreAuthorize("hasRole('USER')")
 	public PollResponse castVote(@CurrentUser UserPrincipal currentUser, @PathVariable Long pollId, @RequestBody VoteRequest voteRequest) {
 		return pollServiceImpl.castVoteAndGetUpdatedPoll(pollId, voteRequest, currentUser);
+	}
+
+	@GetMapping("/getAllByTagId")
+	@PreAuthorize("hasRole('USER')")
+	public ApiResponse<List<PollResponse>> getAllPollsByTagId(@RequestParam Long tagId){
+		return pollServiceImpl.getAllPollsByTagId(tagId);
 	}
 
 }
