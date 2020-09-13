@@ -1,6 +1,9 @@
 package tickhubs.model;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import tickhubs.enums.RoomType;
 
@@ -21,10 +24,11 @@ public class Room extends BaseModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	private RoomType roomType;
 
-	private String roomType;
-
-	private Long createdByUser;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private User createdByUser;
 
 	private String name;
 
@@ -49,11 +53,11 @@ public class Room extends BaseModel {
 		this.id = id;
 	}
 
-	public String getRoomType() {
+	public RoomType getRoomType() {
 		return roomType;
 	}
 
-	public void setRoomType(String roomType) {
+	public void setRoomType(RoomType roomType) {
 		this.roomType = roomType;
 	}
 
@@ -85,15 +89,15 @@ public class Room extends BaseModel {
 		return polls;
 	}
 
-	public void setPolls(Set<Poll> polls) {
-		this.polls = polls;
-	}
+    public void setPolls(Set<Poll> polls) {
+        this.polls = polls;
+    }
 
-	public Long getCreatedByUser() {
-		return createdByUser;
-	}
+    public User getCreatedByUser() {
+        return createdByUser;
+    }
 
-	public void setCreatedByUser(Long createdByUser) {
-		this.createdByUser = createdByUser;
-	}
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
+    }
 }

@@ -28,22 +28,6 @@ import tickhubs.service.impl.RoomServiceImpl;
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
-
-	@Autowired
-	private PollRepository pollRepository;
-
-	@Autowired
-	private VoteRepository voteRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private PollServiceImpl pollServiceImpl;
-
-	@Autowired
-	private RoomRepository roomRepository;
-
 	@Autowired
 	private RoomServiceImpl roomServiceImpl;
 
@@ -52,8 +36,6 @@ public class RoomController {
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
 	public ApiResponse createRoom(@RequestBody RoomRequest roomRequest) {
-		Room room = roomServiceImpl.createRoom(roomRequest);
-
-		return new ApiResponse(true, "Room Created Successfully");
+		return roomServiceImpl.createRoom(roomRequest);
 	}
 }

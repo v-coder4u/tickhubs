@@ -52,13 +52,8 @@ public class PollController {
 
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> createPoll(@RequestBody PollRequest pollRequest) {
-		Poll poll = pollServiceImpl.createPoll(pollRequest);
-
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{pollId}").buildAndExpand(poll.getId())
-				.toUri();
-
-		return ResponseEntity.created(location).body(new ApiResponse(true, "Poll Created Successfully"));
+	public ApiResponse createPoll(@RequestBody PollRequest pollRequest) {
+		return pollServiceImpl.createPoll(pollRequest);
 	}
 
 	@GetMapping("/{pollId}")
@@ -77,5 +72,17 @@ public class PollController {
 	public ApiResponse<List<PollResponse>> getAllPollsByTagId(@RequestParam Long tagId){
 		return pollServiceImpl.getAllPollsByTagId(tagId);
 	}
+
+	@GetMapping("/getAllByRoomId")
+	@PreAuthorize("hasRole('USER')")
+	public ApiResponse<List<PollResponse>> getAllPollsByRoomId(@RequestParam Long roomId){
+		return pollServiceImpl.getAllPollsByRoomId(roomId);
+	}
+
+    @GetMapping("/getAllByLoggedInUser")
+    @PreAuthorize("hasRole('USER')")
+    public ApiResponse<List<PollResponse>> getAllPollsByLoggedInUser(){
+        return pollServiceImpl.getAllPollsByLoggedInUser();
+    }
 
 }

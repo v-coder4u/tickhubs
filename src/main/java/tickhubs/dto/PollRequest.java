@@ -30,4 +30,6 @@ public class PollRequest {
 	private PollLength pollLength;
 
 	private Long tagId;
+
+	private Long roomId;
 }

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tickhubs.model.Poll;
+import tickhubs.model.User;
 
 import java.time.Instant;
 import java.util.List;
@@ -29,4 +30,8 @@ public interface PollRepository extends JpaRepository<Poll, Long> {
     List<Poll> findByIdIn(List<Long> pollIds, Sort sort);
 
     Page<Poll> findAllByTagIdAndExpirationDateTimeGreaterThan(Long tagId, Instant expirationdate, Pageable pageable);
+
+    Page<Poll> findAllByRoomIdAndExpirationDateTimeGreaterThan(Long roomId, Instant expirationdate, Pageable pageable);
+
+    Page<Poll> findAllByRoomIdAndCreatedBy(Long roomId, User createdBy, Pageable pageable);
 }

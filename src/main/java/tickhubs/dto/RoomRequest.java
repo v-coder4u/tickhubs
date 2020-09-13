@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
+import tickhubs.enums.RoomType;
 
 //@Getter
 //@Setter
@@ -24,7 +25,7 @@ public class RoomRequest {
 	private String website;
 
 	@NotBlank
-	private String type;
+	private RoomType type;
 
 	public Long getUserId() {
 		return userId;
@@ -58,11 +59,11 @@ public class RoomRequest {
 		this.website = website;
 	}
 
-	public String getType() {
+	public RoomType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(RoomType type) {
 		this.type = type;
 	}
 }
