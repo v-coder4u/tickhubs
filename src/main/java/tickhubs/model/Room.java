@@ -10,32 +10,90 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+// @Getter
+// @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Room extends BaseModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    RoomType roomType;
+	private String roomType;
 
-    User createdBy;
+	private Long createdByUser;
 
-    String name;
+	private String name;
 
-    String website;
+	@Lob
+	@Size(max = 100)
+	private String website;
 
-//    FileManager photo;
+	// FileManager photo;
 
-    @Lob
-    @Size(max = 250)
-    String description;
+	@Lob
+	@Size(max = 250)
+	private String description;
 
-    @OneToMany(mappedBy = "room")
-    private Set<Poll> polls = new HashSet<>();
+	@OneToMany(mappedBy = "room")
+	private Set<Poll> polls = new HashSet<>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getRoomType() {
+		return roomType;
+	}
+
+	public void setRoomType(String roomType) {
+		this.roomType = roomType;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Set<Poll> getPolls() {
+		return polls;
+	}
+
+	public void setPolls(Set<Poll> polls) {
+		this.polls = polls;
+	}
+
+	public Long getCreatedByUser() {
+		return createdByUser;
+	}
+
+	public void setCreatedByUser(Long createdByUser) {
+		this.createdByUser = createdByUser;
+	}
 }
