@@ -11,12 +11,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import tickhubs.model.Room;
+import tickhubs.model.User;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
-	
-	@Query("SELECT r FROM Room r where r.createdByUser = :name")
-	Optional<Room> findByName(String name);
+
+	//Optional<Room> findByName(String name);
 
 	//Page<Room> findByCreatedBy(Long userId, Pageable pageable);
 
@@ -25,4 +25,12 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	//List<Room> findByIdIn(List<Long> pollIds);
 
 	//List<Room> findByIdIn(List<Long> pollIds, Sort sort);
+
+    Page<Room> findAllByCreatedByUser(User createdBy, Pageable pageable);
+    Page<Room> findAllByCreatedByUser_Username(String user, Pageable pageable);
+    Page<Room> findAllByName(String createdBy, Pageable pageable);
+    Page<Room> deleteByNameAndCreatedByUser(String roomName, User createdBy, Pageable pageable);
+
+    @Override
+    void deleteById(Long aLong);
 }

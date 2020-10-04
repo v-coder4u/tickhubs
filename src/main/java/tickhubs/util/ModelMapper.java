@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import tickhubs.dto.RoomResponse;
 import tickhubs.model.Poll;
+import tickhubs.model.Room;
 import tickhubs.model.User;
 import tickhubs.dto.ChoiceResponse;
 import tickhubs.dto.PollResponse;
@@ -42,6 +44,21 @@ public class ModelMapper {
 		pollResponse.setTotalVotes(totalVotes);
 
 		return pollResponse;
+	}
+
+	public static RoomResponse mapRoomToRoomResponse(Room room, User creator) {
+		RoomResponse roomResponse = new RoomResponse();
+		roomResponse.setId(room.getId());
+		roomResponse.setCreationDateTime(room.getCreatedDate());
+		roomResponse.setName(room.getName());
+		roomResponse.setWebsite(room.getWebsite());
+		roomResponse.setDescription(room.getDescription());
+		UserSummary creatorSummary = new UserSummary(creator.getId(), creator.getUsername(), creator.getName());
+		roomResponse.setCreatedByUser(creatorSummary);
+		long totalPollsCount = 1;
+		roomResponse.setRoomType(room.getRoomType());
+		roomResponse.setTotalPolls(totalPollsCount);
+		return roomResponse;
 	}
 
 }
